@@ -1,5 +1,5 @@
 context:
-  version: "0.9.3"
+  version: "0.9.4"
 
 package:
   name: pygtide
@@ -7,7 +7,7 @@ package:
 
 source:
   url: https://pypi.org/packages/source/p/pygtide/pygtide-${{ version }}.tar.gz
-  sha256: cd22ce6a7055c189ea02eedd205e102aad34db44fa912047057305333f456e5d
+  sha256: 4a827ceebfe68e881bf967989227664722e87b32ebacd086cdea1be67ad6534
 
 build:
   skip: match(python, "<3.10")
