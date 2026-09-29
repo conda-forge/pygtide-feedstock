@@ -11,12 +11,16 @@ source:
 
 build:
   skip: match(python, "<3.10")
-  number: 0
+  number: 1
   script:
     - if: win
       then:
         - set "AR=llvm-ar"
         - set "LIB=%PREFIX%\Library\lib;%BUILD_PREFIX%\Library\lib;%LIB%"
+        # Add flang runtime library path to LDFLAGS
+        - set "LDFLAGS=%LDFLAGS% /LIBPATH:%BUILD_PREFIX%\Library\lib /LIBPATH:%PREFIX%\Library\lib"
+        # Pass legacy standard flag for Fortran compatibility  
+        - set "FFLAGS=%FFLAGS% -std=legacy"
         - "%PYTHON% -m pip install . -vv --no-build-isolation --no-deps"
       else:
         - unset MESON_BUILD_ROOT
@@ -34,6 +38,8 @@ requirements:
     - if: win
       then:
         - llvm-tools
+        # Add explicit flang runtime dependency
+        - flang-runtime
 
   host:
     - python
@@ -46,6 +52,8 @@ requirements:
     - if: win
       then:
         - libpgmath
+        # Add explicit flang runtime dependency
+        - flang-runtime
 
   run:
     - python
