@@ -38,8 +38,6 @@ requirements:
     - if: win
       then:
         - llvm-tools
-        # Add explicit flang runtime dependency
-        - flang-runtime
 
   host:
     - python
@@ -52,8 +50,6 @@ requirements:
     - if: win
       then:
         - libpgmath
-        # Add explicit flang runtime dependency
-        - flang-runtime
 
   run:
     - python
