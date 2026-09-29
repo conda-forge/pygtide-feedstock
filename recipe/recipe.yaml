@@ -19,6 +19,8 @@ build:
         - set "LIB=%PREFIX%\Library\lib;%BUILD_PREFIX%\Library\lib;%LIB%"
         # Pass legacy standard flag for Fortran compatibility
         - set "FFLAGS=%FFLAGS% -std=legacy"
+        # flang (LLVM) needs an explicit linker on windows, or meson's compiler check fails
+        - set "FC_LD=lld-link"
         - "%PYTHON% -m pip install . -vv --no-build-isolation --no-deps"
       else:
         - unset MESON_BUILD_ROOT
