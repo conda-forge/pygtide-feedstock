@@ -11,12 +11,15 @@ source:
 
 build:
   skip: match(python, "<3.10")
-  number: 3
+  number: 4
   script:
     - if: win
       then:
         - set "AR=llvm-ar"
         - set "LIB=%PREFIX%\Library\lib;%BUILD_PREFIX%\Library\lib;%LIB%"
+        - for /f "delims=" %%i in ('where /r "%BUILD_PREFIX%" flang_rt.runtime.dynamic.lib 2^>nul') do set "FLANG_RT_DIR=%%~dpi"
+        - if not defined FLANG_RT_DIR (echo Flang runtime import library not found & exit /b 1)
+        - set "LIB=%FLANG_RT_DIR%;%LIB%"
         # flang (LLVM) needs an explicit linker on windows, or meson's compiler check fails
         - set "LD=lld-link"
         - set "FC_LD=lld-link"
