@@ -11,15 +11,23 @@ source:
 
 build:
   skip: match(python, "<3.10")
-  number: 1
+  number: 5
   script:
     - if: win
       then:
         - set "AR=llvm-ar"
         - set "LIB=%PREFIX%\Library\lib;%BUILD_PREFIX%\Library\lib;%LIB%"
-        # Pass legacy standard flag for Fortran compatibility
-        - set "FFLAGS=%FFLAGS% -std=legacy"
-        - "%PYTHON% -m pip install . -vv --no-build-isolation --no-deps"
+        - set "FFLAGS=%FFLAGS% -fms-runtime-lib=static"
+        - for /f "delims=" %%i in ('where /r "%BUILD_PREFIX%\Library\lib\clang" flang_rt.runtime.static.lib 2^>nul') do set "FLANG_LIB_DIR=%%~dpi"
+        - if not defined FLANG_LIB_DIR (echo Flang static runtime library not found & exit /b 1)
+        - set "FLANG_WINDOWS_LIB_DIR=%FLANG_LIB_DIR%..\windows"
+        - set "LIB=%FLANG_WINDOWS_LIB_DIR%;%FLANG_LIB_DIR%;%LIB%"
+        - set "LIBPATH=%FLANG_WINDOWS_LIB_DIR%;%FLANG_LIB_DIR%;%BUILD_PREFIX%\Library\lib;%LIBPATH%"
+        # flang (LLVM) needs an explicit linker on windows, or meson's compiler check fails
+        - set "LD=lld-link"
+        - set "FC_LD=lld-link"
+        - set "CC_LD=lld-link"
+        - '"%PYTHON%" -m pip install . -vv --no-build-isolation --no-deps || (if exist build_abi\meson-logs\meson-log.txt type build_abi\meson-logs\meson-log.txt & exit /b 1)'
       else:
         - unset MESON_BUILD_ROOT
         - unset MESON_SOURCE_ROOT
