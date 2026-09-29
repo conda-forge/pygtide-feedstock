@@ -23,8 +23,7 @@ build:
         - set "LD=lld-link"
         - set "FC_LD=lld-link"
         - set "CC_LD=lld-link"
-        - "%PYTHON% -m pip install . -vv --no-build-isolation --no-deps"
-        - if errorlevel 1 (if exist build_abi\meson-logs\meson-log.txt type build_abi\meson-logs\meson-log.txt & exit /b 1)
+        - '"%PYTHON%" -m pip install . -vv --no-build-isolation --no-deps || (if exist build_abi\meson-logs\meson-log.txt type build_abi\meson-logs\meson-log.txt & exit /b 1)'
       else:
         - unset MESON_BUILD_ROOT
         - unset MESON_SOURCE_ROOT
